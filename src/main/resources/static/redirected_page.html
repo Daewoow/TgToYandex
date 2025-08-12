@@ -1,0 +1,23 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecting</title>
+    <script src="https://yastatic.net/s3/passport-sdk/autofill/v1/sdk-suggest-token-with-polyfills-latest.js"></script>
+</head>
+<body>
+<p>
+    Всё чудесно, продолжай в том же духе
+</p>
+    <script>
+        window.onload = function () {
+            window.YaSendSuggestToken(
+                'https://localhost',
+                {
+                    flag: true
+                }
+            )
+        }
+    </script>
+</body>
+</html>
