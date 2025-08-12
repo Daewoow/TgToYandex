@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Выбор чата</title>
+</head>
+<body>
+<h2>Введите название чата</h2>
+<input id="chatName" type="text" placeholder="Например: Мой чат" />
+<button onclick="startSync()">Начать синхронизацию</button>
+
+<script>
+    async function startSync() {
+        let chatName = document.getElementById('chatName').value;
+        let res = await fetch('/api/tg/sync', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ chatName })
+        });
+        if (res.ok) {
+            window.location.href = '/progress.html';
+        }
+    }
+</script>
+</body>
+</html>
